@@ -1,14 +1,26 @@
-package com.company;
+package classes;
 
 public abstract class Veiculo {
     //Veículo (marca, modelo, ano, quilometragem, placa)
     //Atributos:
-    private String marca;
-    private String modelo;
-    private int ano;
-    private int quilometragem;
-    private String placa;
-    private boolean ligado;
+    protected String marca;
+    protected String modelo;
+    protected int ano;
+    protected int quilometragem;
+    protected String placa;
+    protected boolean ligado;
+
+    //Construtor:
+
+
+    public Veiculo(String marca, String modelo, int ano, int quilometragem, String placa) {
+        this.marca = marca;
+        this.modelo = modelo;
+        this.ano = ano;
+        this.quilometragem = quilometragem;
+        this.placa = placa;
+        this.ligado = false;
+    }
 
     //Métodos:
     public void ligar() {

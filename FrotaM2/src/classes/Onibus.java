@@ -1,7 +1,16 @@
-package com.company;
+package classes;
 
 public class Onibus extends Veiculo {
     private int capacidade;
+
+
+    //Construtor:
+
+    public Onibus(String marca, String modelo, int ano, int quilometragem, String placa, int capacidade) {
+        super(marca, modelo, ano, quilometragem, placa);
+        this.capacidade = capacidade;
+    }
+
 
     public int getCapacidade() {
         return capacidade;
