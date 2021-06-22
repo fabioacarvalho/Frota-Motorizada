@@ -1,4 +1,4 @@
-package classes;
+package com.company;
 
 public class Caminhao extends Veiculo {
     //Caminhão (carga máxima: 16 toneladas, 23 toneladas...)

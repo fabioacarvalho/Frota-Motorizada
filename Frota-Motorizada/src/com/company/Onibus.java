@@ -1,4 +1,4 @@
-package classes;
+package com.company;
 
 public class Onibus extends Veiculo {
     private int capacidade;

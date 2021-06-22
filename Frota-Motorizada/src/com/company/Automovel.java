@@ -1,4 +1,4 @@
-package classes;
+package com.company;
 
 public class Automovel extends Veiculo {
     //Automóvel (motorização: motor 1.0, motor, motor 1.6...)

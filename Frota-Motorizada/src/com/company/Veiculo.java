@@ -1,4 +1,4 @@
-package classes;
+package com.company;
 
 public abstract class Veiculo {
     //Veículo (marca, modelo, ano, quilometragem, placa)
