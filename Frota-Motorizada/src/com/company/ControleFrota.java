@@ -12,8 +12,6 @@ import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
-import java.util.Scanner;
-
 public class ControleFrota {
 
     //Criação do meu ArrayLista aonde serão armazenados os veículos:
@@ -178,8 +176,10 @@ public class ControleFrota {
         String entrada;
         int    opc1, opc2;
 
+        veiculos = recuperaVeiculos();
 
         do {
+
             menu = "Controle Frota\n" +
                     "Opções:\n" +
                     "1. Entrar Novo Veiculo\n" +
@@ -190,6 +190,7 @@ public class ControleFrota {
                     "9. Sair";
             entrada = JOptionPane.showInputDialog (menu + "\n\n");
             opc1 = this.retornaInteiro(entrada);
+
 
             switch (opc1) {
                 case 1:// Entrar dados
