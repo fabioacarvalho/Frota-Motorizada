@@ -24,7 +24,6 @@ public class Automovel extends Veiculo {
     @Override
     public String toString() {
         return super.toString() +
-                "motorizacao='" + motorizacao + '\'' +
-                '}';
+                "motorizacao= " + motorizacao + '\n';
     }
 }

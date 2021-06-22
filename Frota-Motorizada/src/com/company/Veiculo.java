@@ -1,6 +1,8 @@
 package com.company;
 
-public abstract class Veiculo {
+import java.io.Serializable;
+
+public abstract class Veiculo implements Serializable {
     //Veículo (marca, modelo, ano, quilometragem, placa)
     //Atributos:
     protected String marca;
@@ -83,12 +85,11 @@ public abstract class Veiculo {
 
     @Override
     public String toString() {
-        return "Veiculo{" +
-                "marca='" + marca + '\'' +
-                ", modelo='" + modelo + '\'' +
-                ", ano=" + ano +
-                ", quilometragem=" + quilometragem +
-                ", placa='" + placa + '\'' +
-                ", ligado=" + (getLigado() ? " Veiculo Ligado" : " Veiculo Desligado") + ", ";
+        return  "marca= " + marca + '\n' +
+                "modelo= " + modelo + " - " +
+                "ano=" + ano + '\n' +
+                "quilometragem= " + quilometragem + '\n' +
+                "placa= " + placa + '\n' +
+                "ligado= " + (getLigado() ? " Veiculo Ligado" : " Veiculo Desligado") + '\n';
     }
 }

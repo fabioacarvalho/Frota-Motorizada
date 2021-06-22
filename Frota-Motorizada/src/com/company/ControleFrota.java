@@ -110,7 +110,8 @@ public class ControleFrota {
         ObjectOutputStream outputStream = null;
         try {
             outputStream = new ObjectOutputStream
-                    (new FileOutputStream("c:\\temp\\FrotaMotorizada.dados"));
+                    //Local aonde salvar:
+                    (new FileOutputStream("FrotaMotorizada.json"));
             for (int i=0; i < veiculos.size(); i++)
                 outputStream.writeObject(veiculos.get(i));
         } catch (FileNotFoundException ex) {
@@ -140,7 +141,8 @@ public class ControleFrota {
         //Tratando erros:
         try {
             inputStream = new ObjectInputStream
-                    (new FileInputStream("c:\\temp\\frotaMotorizada.dados"));
+                    //local aonde recuperar:
+                    (new FileInputStream("FrotaMotorizada.json"));
             Object obj = null;
             while ((obj = inputStream.readObject()) != null) {
                 if (obj instanceof Veiculo) {
@@ -168,7 +170,6 @@ public class ControleFrota {
         }
     }
 
-
     //Implementando o MENU:
 
     public void menuFrotaMotorizada (){
@@ -176,6 +177,7 @@ public class ControleFrota {
         String menu = "";
         String entrada;
         int    opc1, opc2;
+
 
         do {
             menu = "Controle Frota\n" +

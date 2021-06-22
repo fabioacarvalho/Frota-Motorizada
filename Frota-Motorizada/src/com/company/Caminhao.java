@@ -28,6 +28,6 @@ public class Caminhao extends Veiculo {
     public String toString() {
         return super.toString() +
                 " cargaMaxima=" + cargaMaxima +
-                '}';
+                '\n';
     }
 }

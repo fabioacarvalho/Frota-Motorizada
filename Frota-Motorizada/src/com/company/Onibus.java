@@ -24,6 +24,6 @@ public class Onibus extends Veiculo {
     public String toString() {
         return super.toString() +
                 "capacidade=" + capacidade +
-                '}';
+                '\n';
     }
 }
