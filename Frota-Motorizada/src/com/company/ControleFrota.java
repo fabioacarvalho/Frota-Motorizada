@@ -1,122 +1,266 @@
 package com.company;
 
+//Imports Realizados:
+import java.io.EOFException;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+
+import javax.swing.JOptionPane;
+
 import java.util.Scanner;
 
 public class ControleFrota {
 
-    public static void main(String[] args) {
+    //Criação do meu ArrayLista aonde serão armazenados os veículos:
+    private ArrayList<Veiculo> veiculos;
 
-        FrotaMotorizada frota = new FrotaMotorizada();
+    //Criação do Construtor:
+    public ControleFrota() {
+        //Instanciando meu array...
+        this.veiculos = new ArrayList<Veiculo>();
+    }
 
-        var veiculos = new ArrayList<Veiculo>();
+    //Criando uma função para leitura dos valores:
+    public String[] leValores (String [] dadosIn){
+        String [] dadosOut = new String [dadosIn.length];
 
-        //String marca, String modelo, int ano, int quilometragem, String placa, String motorizacao
-        veiculos.add(new Automovel("Fiat", "Siena", 2004, 359588, "ABC-1234", "Fire 1.0"));
-        veiculos.add(new Onibus("Mercedez", "M1", 2012,30523, "CBA-4321", 20));
-        veiculos.add(new Caminhao("Volkswagen", "VW-31", 2021, 000001, "DDD-0235", 15));
+        //Criando um for para gerar meu menu:
+        for (int i = 0; i < dadosIn.length; i++)
+            dadosOut[i] = JOptionPane.showInputDialog  ("Entre com " + dadosIn[i]+ ": ");
+
+        return dadosOut;
+    }
+
+    //Vamos criar agora nossos leitores das instancias de Veiculo:
+    public Automovel leAutomovel (){
+
+        String [] valores = new String [7];
+        String [] nomeVal = {"marca", "modelo", "ano", "quilometragem", "placa", "motor"};
+        valores = leValores (nomeVal);
+
+        //Converter para inteiro meus valores que estão dentro do array valores para adicionar na nova instancia de Automovel:
+        int ano = this.retornaInteiro(valores[1]);
+        int quilometragem = this.retornaInteiro(valores[3]);
+
+        Automovel automovel = new Automovel (valores[0], valores[1], ano, quilometragem, valores[4], valores[5]);
+        return automovel;
+    }
+
+    public Caminhao leCaminhao (){
+
+        String [] valores = new String [7];
+        String [] nomeVal = {"marca", "modelo", "ano", "quilometragem", "placa", "Carga Maxima"};
+        valores = leValores (nomeVal);
+
+        //Converter para inteiro meus valores que estão dentro do array valores para adicionar na nova instancia de Automovel:
+        int ano = this.retornaInteiro(valores[1]);
+        int quilometragem = this.retornaInteiro(valores[3]);
+        int cargaMaxima = this.retornaInteiro(valores[5]);
+
+        //Caminhão recebe / instancia um novo caminhão passando como parametro os seguintes atributos:
+        Caminhao caminhao = new Caminhao (valores[0], valores[1], ano, quilometragem, valores[4], cargaMaxima);
+        return caminhao;
+    }
+
+    public Onibus leOnibus (){
+
+        String [] valores = new String [7];
+        String [] nomeVal = {"marca", "modelo", "ano", "quilometragem", "placa", "Capacidade"};
+        valores = leValores (nomeVal);
+
+        //Converter para inteiro meus valores que estão dentro do array valores para adicionar na nova instancia de Automovel:
+        int ano = this.retornaInteiro(valores[1]);
+        int quilometragem = this.retornaInteiro(valores[3]);
+        int capacidade = this.retornaInteiro(valores[5]);
+
+        //Onibus recebe / instancia um novo Onibus passando como parametro os seguintes atributos:
+        Onibus onibus = new Onibus (valores[0], valores[1], ano, quilometragem, valores[4], capacidade);
+        return onibus;
+    }
+
+    private boolean intValido(String s) {
+        try {
+            Integer.parseInt(s);
+            return true;
+        } catch (NumberFormatException e) { // Caso não consiga converter em inteiro e gera erro.
+            return false;
+        }
+    }
+
+    //Criamos uma formula para converter em inteiro os dados que eu receber de um Array.
+    public int retornaInteiro(String entrada) { // retorna um valor inteiro
+        int numInt;
+
+        //Criando um loop para leitura / conversão para um valor inteiro:
+        while (!this.intValido(entrada)) {
+            entrada = JOptionPane.showInputDialog(null, "Valor incorreto!\n\nDigite um n�mero inteiro.");
+        }
+        return Integer.parseInt(entrada);
+    }
 
 
-        System.out.println("Escolha uma das opções a seguir: ");
-        //System.out.println("1. Mostrar lista; \n 2. Adicionar novo veiculo; \n 3. Remover Veiculo. \n 4. Sair.");
-        Scanner leitor = new Scanner(System.in);
-        int escolha;
+    //Implementando o Código para salvar em arquivo:
+
+    public void salvaFrota (ArrayList<Veiculo> veiculos){
+        ObjectOutputStream outputStream = null;
+        try {
+            outputStream = new ObjectOutputStream
+                    (new FileOutputStream("c:\\temp\\FrotaMotorizada.dados"));
+            for (int i=0; i < veiculos.size(); i++)
+                outputStream.writeObject(veiculos.get(i));
+        } catch (FileNotFoundException ex) {
+            JOptionPane.showMessageDialog(null,"Impossível criar arquivo!");
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {  //Close the ObjectOutputStream
+            try {
+                if (outputStream != null) {
+                    outputStream.flush();
+                    outputStream.close();
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    //Recuperando dados do arquivo:
+
+    public ArrayList<Veiculo> recuperaVeiculos (){
+        ArrayList<Veiculo> veiculosTemp = new ArrayList<Veiculo>();
+
+        ObjectInputStream inputStream = null;
+
+        //Tratando erros:
+        try {
+            inputStream = new ObjectInputStream
+                    (new FileInputStream("c:\\temp\\frotaMotorizada.dados"));
+            Object obj = null;
+            while ((obj = inputStream.readObject()) != null) {
+                if (obj instanceof Veiculo) {
+                    veiculosTemp.add((Veiculo) obj);
+                }
+            }
+        } catch (EOFException ex) { // when EOF is reached
+            System.out.println("Fim de arquivo.");
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (FileNotFoundException ex) {
+            JOptionPane.showMessageDialog(null,"Arquivo com veiculos NÃO existe!");
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {  //Close the ObjectInputStream
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (final IOException ex) {
+                ex.printStackTrace();
+            }
+            return veiculosTemp;
+        }
+    }
+
+
+    //Implementando o MENU:
+
+    public void menuFrotaMotorizada (){
+
+        String menu = "";
+        String entrada;
+        int    opc1, opc2;
 
         do {
-            System.out.println("1. Mostrar lista; \n 2. Adicionar novo veiculo; \n 3. Remover Veiculo. \n 4. Sair.");
-            escolha = leitor.nextInt();
-            switch (escolha){
-                case 1:
-                    frota.imprimirLista(veiculos);
+            menu = "Controle Frota\n" +
+                    "Opções:\n" +
+                    "1. Entrar Novo Veiculo\n" +
+                    "2. Exibir Veiculos\n" +
+                    "3. Limpar Veiculos\n" +
+                    "4. Gravar Veiculos\n" +
+                    "5. Recuperar Veiculos\n" +
+                    "9. Sair";
+            entrada = JOptionPane.showInputDialog (menu + "\n\n");
+            opc1 = this.retornaInteiro(entrada);
 
-                /*
-                System.out.println("Voce escolheu a 1");
-                for (var veiculo: veiculos) {
-                    System.out.println(veiculo.toString());
-                }
-                */
+            switch (opc1) {
+                case 1:// Entrar dados
+                    menu = "Entrada de Veiculos\n" +
+                            "Opções:\n" +
+                            "1. Automovel\n" +
+                            "2. Caminhao\n" +
+                            "3. Onibus\n";
 
-                    break;
-                case 2:
-                    System.out.println("Escolho o tipo do veiculo: \n 1. Automovel. \n 2. Caminhao \n 3. Onibus.");
-                    int tipo = leitor.nextInt();
-                    if (tipo == 1) {
-                        System.out.println("Adiione os dados a seguir: ");
-                        System.out.println("marca: ");
-                        String marca = leitor.next();
-                        System.out.println("modelo: ");
-                        String modelo = leitor.next();
-                        System.out.println("ano: ");
-                        int ano = leitor.nextInt();
-                        System.out.println("Km: ");
-                        int km = leitor.nextInt();
-                        System.out.println("placa: ");
-                        String placa = leitor.next();
-                        System.out.println("Motor: ");
-                        String motor = leitor.next();
+                    entrada = JOptionPane.showInputDialog (menu + "\n\n");
+                    opc2 = this.retornaInteiro(entrada);
 
-                        veiculos.add(new Automovel(marca, modelo, ano, km, placa, motor));
-                        System.out.println("Veiculo Adicionado com sucesso.");
-
-                        frota.imprimirLista(veiculos);
-
-                    } else if (tipo == 2) {
-                        System.out.println("Adiione os dados a seguir: ");
-                        System.out.println("marca: ");
-                        String marca = leitor.next();
-                        System.out.println("modelo: ");
-                        String modelo = leitor.next();
-                        System.out.println("ano: ");
-                        int ano = leitor.nextInt();
-                        System.out.println("Km: ");
-                        int km = leitor.nextInt();
-                        System.out.println("placa: ");
-                        String placa = leitor.next();
-                        System.out.println("Carga Máxima: ");
-                        int carga = leitor.nextInt();
-
-                        veiculos.add(new Caminhao(marca, modelo, ano, km, placa, carga));
-                        System.out.println("Veiculo Adicionado com sucesso.");
-                    } else if (tipo == 3) {
-                        System.out.println("Adiione os dados a seguir: ");
-                        System.out.println("marca: ");
-                        String marca = leitor.next();
-                        System.out.println("modelo: ");
-                        String modelo = leitor.next();
-                        System.out.println("ano: ");
-                        int ano = leitor.nextInt();
-                        System.out.println("Km: ");
-                        int km = leitor.nextInt();
-                        System.out.println("placa: ");
-                        String placa = leitor.next();
-                        System.out.println("Capacidade: ");
-                        int capacidade = leitor.nextInt();
-
-                        veiculos.add(new Onibus(marca, modelo, ano, km, placa, capacidade));
-                        System.out.println("Veiculo Adicionado com sucesso.");
-                    } else {
-                        System.out.println("Veículo não adicionado. \n Favor digitar um valor válido!!");
+                    //Adicionando novos veiculos:
+                    switch (opc2){
+                        case 1: veiculos.add((Veiculo)leAutomovel());
+                            break;
+                        case 2: veiculos.add((Veiculo)leCaminhao());
+                            break;
+                        case 3: veiculos.add((Veiculo)leOnibus());
+                            break;
+                        default:
+                            JOptionPane.showMessageDialog(null,"Veiculo para entrada NÃO escolhido!");
                     }
 
                     break;
-                case 3:
-                    System.out.print("Qual item da lista quer remover, adicione o número: ");
-                    int valorRemover = leitor.nextInt();
-                    veiculos.remove(valorRemover);
-                    System.out.println("Veiculo removido com sucesso.");
-                    frota.imprimirLista(veiculos);
-
+                case 2: // Exibir dados
+                    if (veiculos.size() == 0) {
+                        JOptionPane.showMessageDialog(null,"Entre com um veiculo primeiramente");
+                        break;
+                    }
+                    String dados = "";
+                    for (int i=0; i < veiculos.size(); i++)	{
+                        dados += veiculos.get(i).toString() + "---------------\n";
+                    }
+                    JOptionPane.showMessageDialog(null,dados);
                     break;
-                default:
-                    System.out.println("Escolheu sair.");
-
+                case 3: // Limpar Dados
+                    if (veiculos.size() == 0) {
+                        JOptionPane.showMessageDialog(null,"Entre com um veiculo primeiramente");
+                        break;
+                    }
+                    veiculos.clear();
+                    JOptionPane.showMessageDialog(null,"Dados LIMPOS com sucesso!");
+                    break;
+                case 4: // Grava Dados
+                    if (veiculos.size() == 0) {
+                        JOptionPane.showMessageDialog(null,"Entre com um veiculo primeiramente");
+                        break;
+                    }
+                    salvaFrota(veiculos);
+                    JOptionPane.showMessageDialog(null,"Dados SALVOS com sucesso!");
+                    break;
+                case 5: // Recupera Dados
+                    veiculos = recuperaVeiculos();
+                    if (veiculos.size() == 0) {
+                        JOptionPane.showMessageDialog(null,"Sem dados para apresentar.");
+                        break;
+                    }
+                    JOptionPane.showMessageDialog(null,"Dados RECUPERADOS com sucesso!");
+                    break;
+                case 9:
+                    JOptionPane.showMessageDialog(null,"Fim do aplicativo Frota Motorizada");
+                    break;
             }
-        } while (escolha != 4);
+        } while (opc1 != 9);
+    }
 
 
 
+    public static void main(String[] args) {
 
-
+        ControleFrota frota = new ControleFrota ();
+        frota.menuFrotaMotorizada();
 
     }
 }
